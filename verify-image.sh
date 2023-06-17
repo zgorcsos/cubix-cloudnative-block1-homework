@@ -9,5 +9,5 @@ if [ $RESULT -ne 0 ]; then
   docker logs test
 fi
 docker stop test > /dev/null
-docker rm test > /dev/nulldocker stop test
+docker rm test > /dev/null
 exit $RESULT
