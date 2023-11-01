@@ -1,0 +1,16 @@
+meta {
+  name: GET default message -after change-
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/cubix/test
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res("message"): eq This is a default message
+}

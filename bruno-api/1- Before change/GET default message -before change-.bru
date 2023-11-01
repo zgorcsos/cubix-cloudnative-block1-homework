@@ -1,0 +1,16 @@
+meta {
+  name: GET default message -before change-
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/application/test
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res("message"): eq default
+}
