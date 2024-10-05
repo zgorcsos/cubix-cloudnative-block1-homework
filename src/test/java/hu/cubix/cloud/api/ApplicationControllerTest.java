@@ -11,16 +11,17 @@ class ApplicationControllerTest {
 
     @Test
     void defaultMessage() {
-        ApplicationController controller = new ApplicationController();
+        String defaultMessage = "default";
+        ApplicationController controller = new ApplicationController(defaultMessage);
         CubixResponse response = controller.demoMessage("");
         assertThat(response.time(), is(notNullValue()));
-        assertThat(response.message(), is("default"));
+        assertThat(response.message(), is(defaultMessage));
     }
 
     @Test
     void customMessage() {
         String message = "hello";
-        ApplicationController controller = new ApplicationController();
+        ApplicationController controller = new ApplicationController("default");
         CubixResponse response = controller.demoMessage(message);
         assertThat(response.time(), is(notNullValue()));
         assertThat(response.message(), is(message));
