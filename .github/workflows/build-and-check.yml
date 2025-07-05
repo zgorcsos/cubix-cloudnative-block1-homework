@@ -1,0 +1,60 @@
+name: Build and Publish Docker Image then verify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_with_maven:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download code
+        uses: actions/checkout@v4
+
+      - name: Maven build
+        run: ./mvnw package
+
+      - name: Upload artifact for Docker job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/target/*.jar'
+
+  docker_build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write    
+    needs: build_with_maven
+    steps:
+      - name: Download artifact from Maven job
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+
+      - name: Logging in to Docker container registry
+        run: docker login ghcr.io -u zgorcsos -p ${{ github.token }}
+
+      - name: Docker image build
+        run: docker build . -t ghcr.io/zgorcsos/cubix/1/homework/app:springboot
+
+      - name: Docker image push to image registry
+        run: docker push ghcr.io/zgorcsos/cubix/1/homework/app:springboot
+
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write    
+    needs: docker_build_and_publish
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verifing the Docker image
+        run: |
+          chmod +x verify-image.sh
+          ./verify-image.sh
